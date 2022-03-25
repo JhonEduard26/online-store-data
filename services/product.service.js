@@ -1,11 +1,13 @@
 const faker = require('faker');
 const boom = require('@hapi/boom');
+const pool = require('../libs/postgres');
 
 class ProductsService {
-
-  constructor(){
+  constructor() {
     this.products = [];
     this.generate();
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
 
   generate() {
@@ -22,51 +24,34 @@ class ProductsService {
   }
 
   async create(data) {
-    const newProduct = {
-      id: faker.datatype.uuid(),
-      ...data
-    }
-    this.products.push(newProduct);
-    return newProduct;
+    const query = `INSERT INTO products(name) VALUES (${data})`;
+    const rta = await pool.query(query);
+    return rta;
   }
 
-  find() {
-    return this.products;
+  async find() {
+    const query = 'SELECT * FROM products';
+    const rta = await pool.query(query);
+    return rta.rows;
   }
 
   async findOne(id) {
-    const product = this.products.find(item => item.id === id);
-    if (!product) {
-      throw boom.notFound('product not found');
-    }
-    if (product.isBlock) {
-      throw boom.conflict('product is block');
-    }
-    return product;
+    const query = `SELECT * FROM products WHERE id = ${id}`;
+    const rta = await pool.query(query);
+    return rta;
   }
 
   async update(id, changes) {
-    const index = this.products.findIndex(item => item.id === id);
-    if (index === -1) {
-      throw boom.notFound('product not found');
-    }
-    const product = this.products[index];
-    this.products[index] = {
-      ...product,
-      ...changes
-    };
-    return this.products[index];
+    const query = `UPDATE products SET name ${changes} WHERE id = ${id}'`;
+    const rta = await pool.query(query);
+    return rta;
   }
 
   async delete(id) {
-    const index = this.products.findIndex(item => item.id === id);
-    if (index === -1) {
-      throw boom.notFound('product not found');
-    }
-    this.products.splice(index, 1);
-    return { id };
+    const query = `DELETE FROM products WHERE id = ${id}`;
+    const rta = await pool.query(query);
+    return rta;
   }
-
 }
 
 module.exports = ProductsService;
