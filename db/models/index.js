@@ -11,7 +11,10 @@ function setupModels(sequelize) {
   Order.init(OrderSchema, Order.config(sequelize));
   Customer.init(CustomerSchema, Customer.config(sequelize));
 
+  User.assocciate(sequelize.models);
   Customer.assocciate(sequelize.models);
+  Category.assocciate(sequelize.models);
+  Product.assocciate(sequelize.models);
 }
 
 module.exports = setupModels;
