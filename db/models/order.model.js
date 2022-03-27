@@ -1,4 +1,5 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
+const { CUSTOMER_TABLE } = require('./customer.model');
 
 const ORDER_TABLE = 'orders';
 
@@ -9,9 +10,14 @@ const OrderSchema = {
     primaryKey: true,
     type: DataTypes.INTEGER,
   },
-  orderDate: {
+  customerId: {
     allowNull: false,
-    type: DataTypes.DATE,
+    type: DataTypes.INTEGER,
+    field: 'customer_id',
+    reference: {
+      model: CUSTOMER_TABLE,
+      key: 'id',
+    },
   },
   createdAt: {
     allowNull: false,
@@ -22,8 +28,14 @@ const OrderSchema = {
 };
 
 class Order extends Model {
-  static assocciate() {
-    //assocciate
+  static assocciate(models) {
+    this.belongsTo(models.Customer, { as: 'customer' });
+    this.belongsToMany(models.Products, {
+      as: 'items',
+      through: models.OrderProduct,
+      foreignKey: 'orderId',
+      otherKey: 'productId',
+    });
   }
 
   static config(sequelize) {
