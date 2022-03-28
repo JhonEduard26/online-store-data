@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 
-const { config } = require('../config/config');
-const setupModels = require('../db/models');
+const { config } = require('./../config/config');
+const setupModels = require('./../db/models');
 
 const options = {
   dialect: 'postgres',
@@ -9,8 +9,10 @@ const options = {
 };
 
 if (config.isProd) {
-  options.dialetOptions = {
-    ssl: true,
+  options.dialectOptions = {
+    ssl: {
+      rejectUnauthorized: false,
+    },
   };
 }
 
