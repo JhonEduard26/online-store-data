@@ -26,7 +26,8 @@ const OrderSchema = {
     defaultValue: Sequelize.NOW,
   },
   total: {
-    type: DataTypes.VIRTUAL,
+    allowNull: false,
+    type: DataTypes.INTEGER,
     get() {
       if (this.items.length > 0) {
         return this.items.reduce((total, item) => {
