@@ -10,7 +10,10 @@ const options = {
 
 if (config.isProd) {
   options.dialetOptions = {
-    ssl: true,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   };
 }
 
